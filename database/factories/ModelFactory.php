@@ -14,6 +14,7 @@
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 $factory->define(\App\Product::class, function (Faker\Generator $faker) {
   $sellers = App\Seller::pluck('id')->all();
+
   return [
       'seller_id' => $faker->randomElement($sellers),
       'name' => $faker->word,

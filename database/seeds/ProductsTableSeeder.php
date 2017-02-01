@@ -17,6 +17,7 @@ class ProductsTableSeeder extends Seeder
 
       //Get array of ids
       $productsIds      = DB::table('products')->pluck('id')->all();
+      $sellersIds =  DB::table('sellers')->pluck('id')->all();
 
       foreach ((range(1, 10)) as $index)
       {
@@ -31,6 +32,22 @@ class ProductsTableSeeder extends Seeder
           );
         }
       }
+
+
+
+            foreach ($sellersIds as $sellerId) {
+
+                foreach ((range(0, 2)) as $index){
+
+                    $product = App\Product::find($index * $sellerId);
+
+                    if ($product) {
+                        $product->seller_id = $sellerId;
+                        $product->save();
+                    }
+                }
+
+            }
 
 
     }
