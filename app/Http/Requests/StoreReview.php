@@ -25,8 +25,9 @@ class StoreReview extends FormRequest
     {
 
       return [
+          'product_id'=> 'nullable',
           'reviewer_name' => 'required|string',
-          'title' => 'required|numeric|min:0',
+          'title' => 'required|string',
           'content' => 'required|string',
       ];
     }

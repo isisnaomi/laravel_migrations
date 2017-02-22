@@ -6,8 +6,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Seller as Seller;
 use App\Product as Product;
+use App\Review as Review;
 use App\Tag as Tag;
 use App\Http\Requests\StoreProduct as StoreProduct;
+use App\Http\Requests\StoreReview as StoreReview;
 use Response;
 
 class ProductController extends Controller
@@ -113,16 +115,17 @@ class ProductController extends Controller
   //Show reviews of one product
   public function showReviews(Product $product)
   {
-    $reviews = Review::where('product_id', $product->id);
-    return Response::json($reviews);
+    $reviews = Review::all()->where('product_id', $product->id);
+    return $reviews;
   }
 
   //Store new review of a product
-  public function storeReviews(storeReview $request, Product $product)
+  public function storeReview(StoreReview $request, Product $product)
   {
+    $request->product_id =$product->id;
     $attributes = $request->all();
-    $attributes->product_id = $product->id;
     $review = Review::create($attributes);
+    $review->save();
 
     return Response::json($product);
   }

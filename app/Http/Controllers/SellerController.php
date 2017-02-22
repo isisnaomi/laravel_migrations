@@ -68,11 +68,10 @@ class SellerController extends Controller
   }
 
   //Add address to a Seller
-  public function addAddress(Request $request, Seller $seller)
+  public function addAddress(StoreReview $request, Seller $seller)
   {
     $attributes = $request->all();
     $address = Address::create($attributes);
-    $address->save;
     $seller->address_id =$address->id;
     $seller->save();
 
