@@ -30,7 +30,7 @@ Route::delete('products/{product}/reviews/{review}','ProductController@destroyRe
 /*Sellers routes*/
 Route::get('sellers','SellerController@index');
 Route::get('sellers/{seller}', 'SellerController@show');
-Route::get('sellers/{seller}', 'SellerController@store');
+Route::post('sellers', 'SellerController@store');
 Route::put('sellers/{seller}','SellerController@update');
 Route::patch('sellers/{seller}','SellerController@update');
 Route::delete('sellers/{seller}','SellerController@destroy');

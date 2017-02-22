@@ -13,7 +13,7 @@ class StoreSeller extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -26,6 +26,7 @@ class StoreSeller extends FormRequest
         return [
             'name' => 'required|string',
             'last_name' =>'required|string',
+            'address_id'=> 'nullable',
         ];
     }
 }

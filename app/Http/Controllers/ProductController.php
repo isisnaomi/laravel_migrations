@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreProduct;
 use Illuminate\Http\Request;
-use App\Product as Product;
+use Illuminate\Support\Facades\DB;
 use App\Seller as Seller;
+use App\Product as Product;
 use App\Tag as Tag;
+use App\Http\Requests\StoreProduct as StoreProduct;
 use Response;
 
 class ProductController extends Controller
@@ -14,36 +15,50 @@ class ProductController extends Controller
   //List product
   public function index()
   {
-    //TODO show tags and seller of all products
     $products = Product::all();
-    $list_products;
+    $list_products = array();
+    $product_tags = array();
 
     foreach ($products as $product) {
-      $product_seller = Seller:where('id', $product->seller_id);
-      $product_tags= Tag::where('product_id', $product->id);
+      $product_seller = Seller::all()->where('id', $product->seller_id)->first()->name;
+
+      $product_tags_id = DB::table('product_tag')->where('product_id',$product->id)->pluck('tag_id');
+      foreach ($product_tags_id as $tag_id) {
+        $product_tag = Tag::all()->where('id', $tag_id)->first()->name;
+        array_push($product_tags, $product_tag);
+      }
+
 
       $product_info= [
-      "tags" => $product_tags,
-      "seller" => $product_seller,
+          "product"=>$product,
+          "tags" => $product_tags,
+          "seller" => $product_seller,
       ];
 
       array_push($list_products, $product_info);
     }
-    return Response::json(Product::all());
+    return Response::json($list_products);
   }
 
   //Show information of one product
   public function show(Product $product)
   {
-    $tags = Tag::where('product_id', $product->id);
-    $seller = Seller:where('seller_id', $product->seller_id);
+    $product_tags = array();
+    $product_tags_id = DB::table('product_tag')->where('product_id',$product->id)->pluck('tag_id');
+
+    foreach ($product_tags_id as $tag_id) {
+      $product_tag = Tag::all()->where('id', $tag_id)->first()->name;
+      array_push($product_tags, $product_tag);
+    }
+    $product_seller = Seller::all()->where('id', $product->seller_id)->first()->name;
 
     $product_info= [
-    "tags" => $tags,
-    "seller" => $seller,
+        "product"=>$product,
+        "tags" => $product_tags,
+        "seller" => $product_seller,
     ];
 
-    return $product;
+    return $product_info;
   }
 
   //Save a new product
@@ -98,7 +113,7 @@ class ProductController extends Controller
   //Show reviews of one product
   public function showReviews(Product $product)
   {
-    $reviews = Review::where('product_id', $product->id)
+    $reviews = Review::where('product_id', $product->id);
     return Response::json($reviews);
   }
 
@@ -106,7 +121,7 @@ class ProductController extends Controller
   public function storeReviews(storeReview $request, Product $product)
   {
     $attributes = $request->all();
-    $attributes->product_id = $id;
+    $attributes->product_id = $product->id;
     $review = Review::create($attributes);
 
     return Response::json($product);

@@ -5,7 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Seller as Seller;
 use App\Product as Product;
-use App\Seller as Seller;
+use App\Address as Address;
+use App\Http\Requests\StoreSeller as StoreSeller;
 use Response;
 
 class SellerController extends Controller
@@ -19,7 +20,7 @@ class SellerController extends Controller
   //Show information of a seller
   public function show(Seller $seller)
   {
-    return Response::json($seller);
+    return $seller;
   }
 
   //Save new Seller
@@ -28,13 +29,29 @@ class SellerController extends Controller
     $attributes = $request->all();
     $seller = Seller::create($attributes);
 
-    return Response::json($product);
+    $seller->save();
+
+    return Response::json($seller);
   }
 
   //Update a Seller partially or completely
   public function update(StoreSeller $request,Seller $seller)
   {
     $attributes = $request->all();
+
+    if ($request->isMethod('put')) {
+
+      $this->validate($request, [
+          'name' => 'required|string',
+          'last_name' => 'required|string',
+      ]);
+
+    } elseif($request->isMethod('patch')) {
+      $this->validate($request, [
+          'name' => 'string',
+          'last_name' => 'string',
+      ]);
+    }
     $seller->update($attributes);
 
     return $seller;
@@ -51,10 +68,13 @@ class SellerController extends Controller
   }
 
   //Add address to a Seller
-  public function addAddress(Request $request)
+  public function addAddress(Request $request, Seller $seller)
   {
     $attributes = $request->all();
     $address = Address::create($attributes);
+    $address->save;
+    $seller->address_id =$address->id;
+    $seller->save();
 
     return Response::json($address);
   }
@@ -63,9 +83,11 @@ class SellerController extends Controller
   public function updateAddress(Request $request, Seller $seller)
   {
     $attributes = $request->all();
-    $address = Address::where('seller_id', $seller->id)->update($attributes);
+    $address = Address::all()->where('id', $seller->address_id)->first();
+    $address->update($attributes);
 
-    return $seller;
+
+    return $address;
   }
 
 }
