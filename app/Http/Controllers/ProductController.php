@@ -132,7 +132,7 @@ class ProductController extends Controller
   //Store new review of a product
   public function storeReview(StoreReview $request, Product $product)
   {
-    $request->product_id =$product->id;
+    $request['product_id'] =$product->id;
     $attributes = $request->all();
     $review = Review::create($attributes);
     $review->save();
