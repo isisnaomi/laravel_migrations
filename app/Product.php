@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
 {
+  protected $fillable = ['seller_id','name','price','description'];
   /* A product is sold by only one seller */
   public function seller()
   {

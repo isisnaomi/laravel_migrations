@@ -28,7 +28,7 @@ class StoreProduct extends FormRequest
           'name' => 'required|string',
           'price' => 'required|numeric|min:0',
           'description' => 'required|string',
-          'seller' => 'required|exists:sellers',
+          'seller_id' => 'required|exists:sellers,id',
           'tags'=> 'required',
       ];
     }

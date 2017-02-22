@@ -66,10 +66,20 @@ class ProductController extends Controller
   //Save a new product
   public function store(StoreProduct $request)
   {
-    //TODO Hacer las tags si no existen
     $attributes = $request->all();
 
     $product = Product::create($attributes);
+
+    $product_tags = explode(',', $request['tags']);
+    foreach ($product_tags  as &$product_tag) {
+      $tag = Tag::where('name', '=', $product_tag)->first();
+
+      if ($tag === null) {
+        $tag = Tag::create(["name" => $product_tag]);
+      }
+      DB::table('product_tag')->insert(['product_id'=>$product->id, 'tag_id' => $tag->id]);
+    }
+
     return Response::json($product);
   }
 
@@ -94,7 +104,7 @@ class ProductController extends Controller
         'price' => 'numeric|min:0',
         'description' => 'string',
         'seller' => 'exists:sellers',
-        'tags'=> 'requiered',
+        'tags'=> 'required',
       ]);
 
     }
