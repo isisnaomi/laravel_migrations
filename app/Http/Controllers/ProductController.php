@@ -98,15 +98,32 @@ class ProductController extends Controller
         'tags'=> 'required',
       ]);
 
+
     } elseif($request->isMethod('patch')){
       $this->validate($request, [
         'name' => 'string',
         'price' => 'numeric|min:0',
         'description' => 'string',
         'seller' => 'exists:sellers',
-        'tags'=> 'required',
+        'tags'=> 'string',
       ]);
+    }
 
+
+
+    $product_tags = explode(',', $request['tags']);
+    if(!empty($product_tag)){
+
+      DB::table('product_tag')->where('product_id', =, $product->id)->delete();
+      foreach ($product_tags  as &$product_tag) {
+        $tag = Tag::where('name', '=', $product_tag)->first();
+
+          if ($tag === null) {
+            $tag = Tag::create(["name" => $product_tag]);
+          }
+          
+        DB::table('product_tag')->insert(['product_id'=>$product->id, 'tag_id' => $tag->id]);
+      }
     }
 
     $product->update($attributes);
